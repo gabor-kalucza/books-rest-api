@@ -1,11 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-
-interface IBook {
-  title: string;
-  author: string;
-  genre: string;
-  price: number;
-}
+import mongoose, { Schema } from 'mongoose'
+import type IBook from '../types/book'
 
 const BookSchema: Schema = new Schema(
   {
@@ -14,9 +8,9 @@ const BookSchema: Schema = new Schema(
     genre: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
   },
-  { timestamps: true },
-);
+  { timestamps: true }
+)
 
-const Book = mongoose.model<IBook>('Book', BookSchema);
+const Book = mongoose.model<IBook>('Book', BookSchema)
 
-export default Book;
+export default Book

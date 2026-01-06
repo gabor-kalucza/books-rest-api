@@ -1,76 +1,86 @@
-import { Request, Response } from 'express';
-import Book from '../models/book';
+import type { NextFunction, Request, Response } from 'express'
+import ApiError from '../errors/apiError'
+import Book from '../models/book'
+import { createSuccessResponse } from '../utilities/helpers'
 
-export const createBook = async (req: Request, res: Response) => {
-  const { title, author, genre, price } = req.body;
-
+export const getAllBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const newBook = new Book({ title, author, genre, price });
-    const savedBook = await newBook.save();
-    res.status(201).json(savedBook);
-  } catch (err) {
-    console.error('Error saving book:', err);
-    res.status(500).json({ message: 'Error saving book', error: err });
-  }
-};
+    const limit = parseInt(req.query.limit as string) || 10
 
-export const getAllBooks = async (req: Request, res: Response) => {
-  try {
-    const books = await Book.find().lean();
-    res.status(200).json(books);
-  } catch (err) {
-    console.error('Error retrieving books:', err);
-    res.status(500).json({ message: 'Error retrieving books', error: err });
-  }
-};
+    const books = await Book.find().limit(limit).lean()
 
-export const getBookById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const book = await Book.findById(id).lean();
-    if (!book) {
-      return res.status(404).json({ message: 'Book not found' });
+    if (!books || books.length === 0) {
+      throw ApiError.notFound('No books found')
     }
-    res.status(200).json(book);
+
+    const response = createSuccessResponse(
+      `Successfully retrieved ${books.length} ${
+        books.length === 1 ? 'book' : 'books'
+      }.`,
+      books
+    )
+
+    return res.status(200).json(response)
   } catch (err) {
-    console.error('Error fetching book', err);
-    res.status(500).json({ message: 'Server error', error: err });
+    next(err)
   }
-};
+}
 
-export const updateBookById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { title, author, genre, price } = req.body;
-
+export const getBookById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    const { id } = req.params
+
+    const book = await Book.findById(id).lean()
+
+    if (!book) {
+      throw ApiError.notFound('Book not found')
+    }
+
+    const response = createSuccessResponse(
+      `Successfully retrieved book with ID '${id}' - '${book.title}'`,
+      book
+    )
+
+    return res.status(200).json(response)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const updateBookById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params
+    const { title, author, genre, price } = req.body
+
     const updatedBook = await Book.findByIdAndUpdate(
       id,
       { title, author, genre, price },
-      { new: true, runValidators: true },
-    ).lean();
+      { new: true, runValidators: true }
+    ).lean()
 
     if (!updatedBook) {
-      return res.status(404).json({ message: 'Book not found' });
+      throw ApiError.notFound(`The book with ID '${id}' does not exist.`)
     }
 
-    res.status(200).json(updatedBook);
-  } catch (err) {
-    console.error('Error updating book:', err);
-    res.status(500).json({ message: 'Error updating book', error: err });
-  }
-};
+    const response = createSuccessResponse(
+      `Successfully updated book with ID '${id}' - '${updatedBook.title}'`,
+      updatedBook
+    )
 
-export const deleteBookById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  try {
-    const book = await Book.findByIdAndDelete(id);
-    if (!book) {
-      return res.status(404).json({ message: 'Book not found' });
-    }
-    res.status(200).json({ message: 'Book deleted successfully' });
+    return res.status(200).json(response)
   } catch (err) {
-    console.error('Error deleting book:', err);
-    res.status(500).json({ message: 'Error deleting book', error: err });
+    next(err)
   }
-};
+}
