@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import type Book from '../types/book'
+import { BookDTO } from '../types/BookDTO'
 
 const BookSchema: Schema = new Schema(
   {
@@ -11,6 +11,6 @@ const BookSchema: Schema = new Schema(
   { timestamps: true }
 )
 
-const Book = mongoose.model<Book>('Book', BookSchema)
+const Book = mongoose.model<BookDTO>('Book', BookSchema)
 
 export default Book

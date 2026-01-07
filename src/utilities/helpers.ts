@@ -1,5 +1,5 @@
 import ApiError from '../errors/apiError'
-import type { SuccessResponse } from '../types/apiResponses'
+import type { SuccessResponse } from '../types/ApiResponses'
 
 export const createSuccessResponse = <T>(
   message: string,
