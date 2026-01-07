@@ -1,4 +1,3 @@
-
 A simple REST API for managing books built with Node.js, Express and MongoDB (Mongoose).
 
 ## Features
@@ -110,7 +109,7 @@ All endpoints use JSON and standard HTTP status codes.
 
 ## Seed data
 
-A seed script inserts 20 sample books for testing. Run the script after starting MongoDB and configuring `.env`:
+A seed script inserts 50 sample books for testing. Run the script after starting MongoDB and configuring `.env`:
 
 ```bash
 npm run seed
@@ -129,4 +128,3 @@ curl -s -X POST http://localhost:3000/api/books \
 ## Validation and error handling
 
 - Request validation is implemented using `express-validator` for the create route and ID checks for routes that accept `:id`.
-

@@ -9,6 +9,13 @@ import {
 
 const router = Router()
 
+router.post(
+  '/api/books',
+  validateBookFields,
+  checkValidationErrors,
+  bookController.createBook
+)
+
 router.get(
   '/api/books',
   validateLimit,

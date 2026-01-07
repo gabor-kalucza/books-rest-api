@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express'
 import { body, param, query, validationResult } from 'express-validator'
 
-export const validateBookId: RequestHandler[] = [
+export const validateBookId = [
   param('id').isMongoId().withMessage('Invalid book ID format'),
 ]
 
-export const validateBookFields: RequestHandler[] = [
+export const validateBookFields = [
   body('title')
     .notEmpty()
     .withMessage('Title is required')
@@ -31,7 +31,7 @@ export const validateBookFields: RequestHandler[] = [
     .withMessage('Price must be a positive number'),
 ]
 
-export const validateLimit: RequestHandler[] = [
+export const validateLimit = [
   query('limit')
     .optional()
     .isInt({ min: 1 })

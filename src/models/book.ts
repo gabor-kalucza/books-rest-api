@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import type IBook from '../types/book'
+import type Book from '../types/book'
 
 const BookSchema: Schema = new Schema(
   {
@@ -11,6 +11,6 @@ const BookSchema: Schema = new Schema(
   { timestamps: true }
 )
 
-const Book = mongoose.model<IBook>('Book', BookSchema)
+const Book = mongoose.model<Book>('Book', BookSchema)
 
 export default Book

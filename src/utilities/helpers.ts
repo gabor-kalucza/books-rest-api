@@ -1,11 +1,13 @@
 import ApiError from '../errors/apiError'
-import type { ApiResponse } from '../types/apiResponses'
+import type { SuccessResponse } from '../types/apiResponses'
 
 export const createSuccessResponse = <T>(
   message: string,
+  statusCode: number,
   data: T
-): ApiResponse<T> => ({
+): SuccessResponse<T> => ({
   success: true,
+  statusCode,
   message,
   data,
 })

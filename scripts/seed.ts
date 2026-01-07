@@ -6,7 +6,7 @@ dotenv.config()
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/bookdb'
 
-const sampleBooks = Array.from({ length: 20 }).map((_, i) => ({
+const sampleBooks = Array.from({ length: 50 }).map((_, i) => ({
   title: `Sample Book ${i + 1}`,
   author: `Author ${i + 1}`,
   genre: ['Fiction', 'Sci-Fi', 'Fantasy', 'Non-fiction'][i % 4],

@@ -3,24 +3,54 @@ import ApiError from '../errors/apiError'
 import Book from '../models/book'
 import { createSuccessResponse } from '../utilities/helpers'
 
+export const createBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { title, author, genre, price } = req.body
+
+    const book = new Book({ title, author, genre, price })
+    await book.save()
+
+    const response = createSuccessResponse(
+      'Book was successfully created',
+      201,
+      book
+    )
+
+    return res.status(201).json(response)
+  } catch (err) {
+    next(err)
+  }
+}
+
 export const getAllBooks = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const limit = parseInt(req.query.limit as string) || 10
+    const limit = Math.min(parseInt(req.query.limit as string) || 10, 50)
 
     const books = await Book.find().limit(limit).lean()
 
     if (!books || books.length === 0) {
-      throw ApiError.notFound('No books found')
+      const response = createSuccessResponse(
+        'Successfully retrieved 0 books.',
+        200,
+        []
+      )
+
+      return res.status(200).json(response)
     }
 
     const response = createSuccessResponse(
       `Successfully retrieved ${books.length} ${
         books.length === 1 ? 'book' : 'books'
       }.`,
+      200,
       books
     )
 
@@ -46,6 +76,7 @@ export const getBookById = async (
 
     const response = createSuccessResponse(
       `Successfully retrieved book with ID '${id}' - '${book.title}'`,
+      200,
       book
     )
 
@@ -68,7 +99,7 @@ export const updateBookById = async (
       id,
       { title, author, genre, price },
       { new: true, runValidators: true }
-    ).lean()
+    )
 
     if (!updatedBook) {
       throw ApiError.notFound(`The book with ID '${id}' does not exist.`)
@@ -76,6 +107,7 @@ export const updateBookById = async (
 
     const response = createSuccessResponse(
       `Successfully updated book with ID '${id}' - '${updatedBook.title}'`,
+      200,
       updatedBook
     )
 
