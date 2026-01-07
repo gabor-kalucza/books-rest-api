@@ -93,13 +93,12 @@ export const updateBookById = async (
 ) => {
   try {
     const { id } = req.params
-    const { title, author, genre, price } = req.body
+    const updates = req.body
 
-    const updatedBook = await Book.findByIdAndUpdate(
-      id,
-      { title, author, genre, price },
-      { new: true, runValidators: true }
-    )
+    const updatedBook = await Book.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    })
 
     if (!updatedBook) {
       throw ApiError.notFound(`The book with ID '${id}' does not exist.`)
@@ -109,6 +108,61 @@ export const updateBookById = async (
       `Successfully updated book with ID '${id}' - '${updatedBook.title}'`,
       200,
       updatedBook
+    )
+
+    return res.status(200).json(response)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const patchBookById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params
+    const updates = req.body
+
+    const patchedBook = await Book.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    })
+
+    if (!patchedBook) {
+      throw ApiError.notFound(`The book with ID '${id}' does not exist.`)
+    }
+
+    const response = createSuccessResponse(
+      `Successfully patched book with ID '${id}' - '${patchedBook.title}'`,
+      200,
+      patchedBook
+    )
+
+    return res.status(200).json(response)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const deleteBookById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params
+    const deletedBook = await Book.findByIdAndDelete(id)
+
+    if (!deletedBook) {
+      throw ApiError.notFound(`The book with ID '${id}' does not exist.`)
+    }
+
+    const response = createSuccessResponse(
+      `Successfully deleted book with ID '${id}' - '${deletedBook.title}'`,
+      200,
+      null
     )
 
     return res.status(200).json(response)

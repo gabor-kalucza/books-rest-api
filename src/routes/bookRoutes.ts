@@ -2,6 +2,7 @@ import { Router } from 'express'
 import * as bookController from '../controllers/bookController'
 import {
   checkValidationErrors,
+  partialValidateBookFields,
   validateBookFields,
   validateBookId,
   validateLimit,
@@ -36,6 +37,21 @@ router.put(
   validateBookFields,
   checkValidationErrors,
   bookController.updateBookById
+)
+
+router.patch(
+  '/api/books/:id',
+  validateBookId,
+  partialValidateBookFields,
+  checkValidationErrors,
+  bookController.patchBookById
+)
+
+router.delete(
+  '/api/books/:id',
+  validateBookId,
+  checkValidationErrors,
+  bookController.deleteBookById
 )
 
 export default router

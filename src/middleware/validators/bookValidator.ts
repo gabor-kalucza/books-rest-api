@@ -31,6 +31,25 @@ export const validateBookFields = [
     .withMessage('Price must be a positive number'),
 ]
 
+export const partialValidateBookFields = [
+  body('title').optional().isString().withMessage('Title must be a string'),
+  body('author').optional().isString().withMessage('Author must be a string'),
+  body('genre').optional().isString().withMessage('Genre must be a string'),
+  body('price')
+    .optional()
+    .isFloat({ gt: 0 })
+    .withMessage('Price must be a positive number'),
+  body().custom((_, { req }) => {
+    const body = req.body || {}
+
+    if (Object.keys(body).length === 0) {
+      throw new Error('At least one field must be provided for patch')
+    }
+
+    return true
+  }),
+]
+
 export const validateLimit = [
   query('limit')
     .optional()
