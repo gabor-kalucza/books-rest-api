@@ -1,3 +1,4 @@
+import cors from 'cors'
 import express from 'express'
 import mongoose from 'mongoose'
 import { mongoURI, PORT } from './src/config/config'
@@ -6,6 +7,7 @@ import errorHandler from './src/middleware/errorHandler'
 import bookRoutes from './src/routes/bookRoutes'
 
 const app = express()
+app.use(cors())
 
 if (!process.env.MONGO_URI) {
   console.warn(
