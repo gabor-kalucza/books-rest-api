@@ -1,130 +1,139 @@
-A simple REST API for managing books built with Node.js, Express and MongoDB (Mongoose).
+# books-rest-api
+
+books-rest-api is a local development REST API built with Node.js, Express, and MongoDB. It provides CRUD operations for managing books and follows a Model Repository architecture with centralized error handling and request validation.
+
+## Overview
+
+This API exposes endpoints to create, retrieve, update, and delete book records. Each book contains a title, author, genre, and price.
+
+The application is structured to separate concerns between routing, controllers, services, repositories, and database models, resulting in a clean and maintainable codebase.
 
 ## Features
 
-- Create, read, update, delete books
-- Input validation with `express-validator`
-- Clear structure (models, controllers, routes)
+- Create, read, update, and delete books
+- MongoDB integration using Mongoose
+- Model Repository pattern
+- Centralized error handling middleware
+- Request validation using express validator
+- Consistent API response format
+- Query based pagination using the limit parameter
+- Environment based configuration
+- Local database seed script
 
----
+## Technology Stack
 
-## Architecture
-
-This project follows an MVC-like, layered RESTful pattern:
-
-- `src/models` — Mongoose schemas (data layer)
-- `src/controllers` — request handlers and business logic
-- `src/routes` — HTTP routes that map to controller functions
-- `src/validators` — request validation with `express-validator`
-
-This structure keeps controllers focused and makes the codebase straightforward to navigate.
-
----
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- TypeScript
+- express validator
+- dotenv
+- cors
 
 ## Prerequisites
 
-- Node.js (v16+ recommended)
-- npm
-- MongoDB installed and running locally (required)
+This project is intended to run locally.
 
-> Note: This project assumes a local MongoDB instance. It is not configured to run with Docker or cloud MongoDB services by default.
+You must have the following tools installed before running the application.
 
----
+### Node.js
 
-## Quick start
+Node.js version 18 or higher is required.
 
-1. Clone the repo
+Download and install Node.js from:
 
-```bash
-git clone <repo-url>
-cd book-store-api
-```
+https://nodejs.org
 
-2. Install dependencies
+Verify the installation:
 
-```bash
-npm install
-```
+node --version  
+npm --version
 
-3. Create an `.env` file (or set env vars)
+### MongoDB
 
-Example `.env` contents:
+MongoDB must be installed and running locally.
 
-```
-MONGO_URI=mongodb://localhost:27017/bookdb
-PORT=3000
+Installation guides for your operating system can be found here:
+
+https://www.mongodb.com/docs/manual/installation
+
+After installation, ensure the MongoDB service is running before starting the application.
+
+## Environment Configuration
+
+Create a .env file in the project root directory with the following values:
+
+MONGO_URI=mongodb://localhost:27017/bookdb  
+PORT=3000  
 NODE_ENV=development
-```
 
-4. Start MongoDB (examples)
+Make sure MongoDB is running locally before starting the application.
 
-- Linux (systemd):
+## Installation
 
-```bash
-sudo systemctl start mongod
-```
+Clone the repository and install dependencies:
 
-- macOS (Homebrew):
+git clone https://github.com/gabor-kalucza/books-rest-api  
+cd books-rest-api  
+npm install
 
-```bash
-brew services start mongodb-community
-```
+## Running the Application
 
-- Windows (PowerShell as Admin):
+Start the development server:
 
-```powershell
-net start MongoDB
-# or run mongod.exe directly
-```
-
-Check connection (optional):
-
-```bash
-mongo --eval "db.runCommand({ connectionStatus: 1 })"
-```
-
-5. Run the app
-
-```bash
 npm run dev
-```
 
-The server will listen on `http://localhost:3000` (or the port in your `.env`).
+If the database connection is successful, the server will start and connect to MongoDB.
 
----
+The API will be available at:
+
+http://localhost:3000
+
+## Database Seeding
+
+A seed script is included to populate the local database with book data.
+
+The script removes existing book records and inserts a fresh set of sample books.
+
+Run the seed script with:
+
+npm run seed
+
+Ensure MongoDB is running locally before executing this command.
 
 ## API Endpoints
 
-Base: `http://localhost:3000/api/books`
+POST /api/books  
+GET /api/books  
+GET /api/books/:id  
+PUT /api/books/:id  
+PATCH /api/books/:id  
+DELETE /api/books/:id
 
-- POST `/api/books` — Create a book (body: `title`, `author`, `genre`, `price`)
-- GET `/api/books` — List all books
-- GET `/api/books/:id` — Get a book by id (validates Mongo id)
-- PUT `/api/books/:id` — Update a book by id (validates id and body)
-- DELETE `/api/books/:id` — Delete a book by id
+## API Response Format
 
-All endpoints use JSON and standard HTTP status codes.
+### Success Response
 
----
+{
+"success": true,
+"message": "Operation completed successfully",
+"data": {}
+}
 
-## Seed data
+### Error Response
 
-A seed script inserts 50 sample books for testing. Run the script after starting MongoDB and configuring `.env`:
+{
+"success": false,
+"message": "Book not found",
+"statusCode": 404,
+"data": null
+}
 
-```bash
-npm run seed
-```
+## Error Handling
 
-To add a single book manually, use curl:
+The application uses centralized error handling middleware. Known application errors return meaningful HTTP status codes and descriptive messages. Unexpected errors are handled with a generic internal server error response.
 
-```bash
-curl -s -X POST http://localhost:3000/api/books \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Dune","author":"Frank Herbert","genre":"Sci-Fi","price":9.99}'
-```
+## Validation
 
----
-
-## Validation and error handling
-
-- Request validation is implemented using `express-validator` for the create route and ID checks for routes that accept `:id`.
+Incoming requests are validated using express validator. Requests with invalid or missing data are rejected before reaching the controller layer.
